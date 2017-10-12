@@ -1,0 +1,71 @@
+{
+  "job": {
+    "setting": {
+      "speed": {
+        "channel": 2
+      }
+    },
+    "content": [
+      {
+        "reader": {
+          "name": "oraclereader",
+          "parameter": {
+            "username": "scott",
+            "password": "tiger",
+            "where": "",
+            "column": [
+              "ID",
+              "USER_ID",
+              "VOTE_ID",
+              "GROUP_ID",
+              "CREATE_TIME"
+            ],
+            "connection": [
+              {
+                "table": [
+                  "vote_record"
+                ],
+                "jdbcUrl": [
+                  "jdbc:oracle:thin:@10.0.8.156:1521:orcl"
+                ]
+              }
+            ]
+          }
+        },
+        "writer": {
+          "name": "hdfswriter",
+          "parameter": {
+            "fileType": "orc",
+            "path": "/apps/hive/warehouse/vote_record",
+            "fileName": "datax",
+            "column": [
+              {
+                "name": "ID",
+                "type": "BIGINT"
+              },
+              {
+                "name": "USER_ID",
+                "type": "STRING"
+              },
+              {
+                "name": "VOTE_ID",
+                "type": "BIGINT"
+              },
+              {
+                "name": "GROUP_ID",
+                "type": "BIGINT"
+              },
+              {
+                "name": "CREATE_TIME",
+                "type": "TIMESTAMP"
+              }
+            ],
+            "writeMode": "append",
+            "fieldDelimiter": "\\t",
+            "compress": "NONE"
+          }
+        }
+      }
+    ]
+  }
+}
