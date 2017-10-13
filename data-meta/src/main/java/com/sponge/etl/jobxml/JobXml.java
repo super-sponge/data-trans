@@ -208,6 +208,7 @@ public class JobXml {
     }
 
     public void initHdfsEnv(String defaultFS, String hiveDbPath) {
+        this.setDefaultFS(defaultFS);
         this.setHiveDbPath(hiveDbPath);
     }
 
@@ -302,18 +303,18 @@ public class JobXml {
                     String user = cl.getOptionValue("u");
                     String password = cl.getOptionValue("p");
                     String metaFilePath = cl.getOptionValue("m");
-                    String defaultFs = cl.getOptionValue("f");
+                    String defaultFsIn= cl.getOptionValue("f");
                     String hiveDbPath= cl.getOptionValue("e", "/apps/hive/warehouse");
                     String writeMode = cl.getOptionValue("w", "append");
                     String fileType = cl.getOptionValue("t", "orc");
                     String compress = cl.getOptionValue("c", "NONE");
-                    String delimter = cl.getOptionValue("d", "\\t");
+                    String delimter = cl.getOptionValue("d", "\t");
                     int channels = Integer.parseInt(cl.getOptionValue("n", "2"));
                     String outJsonPath = cl.getOptionValue("o","./");
 
 
                     if (url ==null || user == null || password == null
-                            || outJsonPath == null || defaultFs == null
+                            || outJsonPath == null || defaultFsIn == null
                             || metaFilePath == null) {
                         HelpFormatter hf = new HelpFormatter();
                         hf.printHelp("May Options", opts);
@@ -324,7 +325,7 @@ public class JobXml {
 
                     jobXml.initJobSetting(channels);
                     jobXml.initOraEnv(url, user, password);
-                    jobXml.initHdfsEnv(defaultFs, hiveDbPath);
+                    jobXml.initHdfsEnv(defaultFsIn, hiveDbPath);
                     jobXml.initMetaInfoEnv(metaFilePath);
                     jobXml.setJobJsonDistPath(outJsonPath);
                     jobXml.oraToHdfs("",writeMode,fileType,compress,delimter);

@@ -30,7 +30,7 @@ public class JobXmlTest {
                 "-j", "jdbc:oracle:thin:@10.0.8.156:1521:orcl",
                 "-u", "scott",
                 "-p", "tiger",
-                "-m", "./data/meta.txt",
+                "-m", "./data/all.txt",
                 "-f", "hdfs://sdc1.sefon.com:8020",
                 "-o", "./data"
         };
