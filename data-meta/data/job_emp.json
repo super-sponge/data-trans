@@ -38,6 +38,7 @@
         "writer": {
           "name": "hdfswriter",
           "parameter": {
+            "defaultFS": "hdfs://sdc1.sefon.com:8020",
             "fileType": "orc",
             "path": "/apps/hive/warehouse/emp",
             "fileName": "datax",
@@ -76,7 +77,7 @@
               }
             ],
             "writeMode": "append",
-            "fieldDelimiter": "\\t",
+            "fieldDelimiter": "\t",
             "compress": "NONE"
           }
         }
