@@ -44,6 +44,8 @@
     ./ora_utils.sh -j "jdbc:oracle:thin:@10.0.8.156:1521:orcl" -u scott -p tiger -f all.txt
     导出emp表到emp.txt 文件
     ./ora_utils.sh -j "jdbc:oracle:thin:@10.0.8.156:1521:orcl" -u scott -p tiger -t emp -f emp.txt
+    导出指定schemaName的表
+    ./ora_utils.sh -j "jdbc:oracle:thin:@10.0.8.156:1521:orcl" -s scott -u scott -p tiger -t emp -f emp.txt
     
     根据all.txt 文件,生成相应配置文件到/tmp/data 目录
     ./datax_job.sh -j "jdbc:oracle:thin:@10.0.8.156:1521:orcl" -u scott -p tiger -m all.txt -f "hdfs://sdc1.sefon.com:8020" -o /tmp/data
