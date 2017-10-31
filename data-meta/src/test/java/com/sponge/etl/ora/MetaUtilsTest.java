@@ -12,7 +12,7 @@ public class MetaUtilsTest {
                 "-u", "scott",
                 "-p", "tiger",
                 "-t", "vote_record",
-                "-f", "./data/vote_record.txt"
+                "-f", "./data/meta.txt"
         };
         MetaUtils.ExecuteCommandLine(args);
 
@@ -20,6 +20,7 @@ public class MetaUtilsTest {
                 "-j", "jdbc:oracle:thin:@10.0.8.156:1521:orcl",
                 "-u", "scott",
                 "-p", "tiger",
+                "-s", "scott",
                 "-f", "./data/all.txt"
         };
         MetaUtils.ExecuteCommandLine(args2);

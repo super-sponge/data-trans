@@ -61,17 +61,19 @@ public class JobXml {
         jsonreader.setColumns(oraCols);
 
         String preTable = null;
+        String preSchemaName = null;
         for (String line : this.metaInfos) {
             String[] splits = line.split(",");
-            String tableName = splits[0].toLowerCase();
-            String column = splits[1];
+            String schemaName = splits[0].toLowerCase();
+            String tableName = splits[1].toLowerCase();
+            String column = splits[2];
             //hive data type
-            String columnType = splits[3];
+            String columnType = splits[4];
 
             if (! tableName.equals(preTable)) {
                 //ignore first
                 if (oraCols.size() != 0) {
-                    jsonreader.setTablename(preTable);
+                    jsonreader.setTablename(preSchemaName + "." + preTable);
                     jsonwriter.setPath(this.getHiveTablePath(preTable));
 
                     //create jobXml
@@ -88,6 +90,7 @@ public class JobXml {
                     hdfsCols.clear();
                 }
                 preTable = tableName;
+                preSchemaName = schemaName;
             }
 
             JsonObject hdfsColItem = new JsonObject();
@@ -98,7 +101,7 @@ public class JobXml {
 
         }
 
-        jsonreader.setTablename(preTable);
+        jsonreader.setTablename(preSchemaName + "." + preTable);
         jsonwriter.setPath(this.getHiveTablePath(preTable));
 
         //create jobXml

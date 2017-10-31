@@ -54,6 +54,7 @@ public class MetaUtils {
     }};
 
     public static class MetaInfo{
+        String schemaName;
         String tableName;
         String columnName;
         String columnType;
@@ -61,10 +62,19 @@ public class MetaUtils {
         public MetaInfo() {
         }
 
-        public MetaInfo(String tableName, String columnName, String columnType) {
+        public MetaInfo(String schemaName, String tableName, String columnName, String columnType) {
+            this.schemaName = schemaName;
             this.tableName = tableName;
             this.columnName = columnName;
             this.columnType = columnType;
+        }
+
+        public String getSchemaName() {
+            return schemaName;
+        }
+
+        public void setSchemaName(String schemaName) {
+            this.schemaName = schemaName;
         }
 
         public String getTableName() {
@@ -111,15 +121,21 @@ public class MetaUtils {
         }
     }
 
+
+    public static List<MetaInfo> getOracleTableMetaInfo(String url, String user, String password, String tableName) {
+       return getOracleTableMetaInfo(url,user,password,tableName,user);
+    }
+
     /**
      *
      * @param url  jdbc:oracle:thin:@10.0.8.156:1521:orcl
      * @param user  user name
      * @param password password
      * @param tableName  tableName
+     * @param schemaName schemaName
      * @return
      */
-    public static List<MetaInfo> getOracleTableMetaInfo(String url, String user, String password, String tableName) {
+    public static List<MetaInfo> getOracleTableMetaInfo(String url, String user, String password, String tableName, String schemaName) {
         List<MetaInfo> lstMetainfo = new ArrayList<MetaInfo>(64);
 
         Connection con = null;
@@ -133,17 +149,21 @@ public class MetaUtils {
             LOG.info("connect succed!");
             String sql = null;
             if ("".equals(tableName) || null == tableName) {
-                sql = "select table_name,column_name,data_type from user_tab_columns order by table_name,column_id";
+                sql = "select owner,table_name,column_name,data_type from all_tab_columns  " +
+                        "where owner = ? order by table_name,column_id";
                 pre = con.prepareStatement(sql);
+                pre.setString(1, schemaName.toUpperCase());
             } else {
-                sql = "select table_name,column_name,data_type from user_tab_columns " +
-                        "where table_name = ? order by table_name,column_id";
+                sql = "select  owner,table_name,column_name,data_type from all_tab_columns " +
+                        "where owner = ? and table_name = ? order by owner,table_name,column_id";
                 pre = con.prepareStatement(sql);
-                pre.setString(1, tableName.toUpperCase());
+                pre.setString(1, schemaName.toUpperCase());
+                pre.setString(2, tableName.toUpperCase());
             }
             result = pre.executeQuery();
             while (result.next())
-                lstMetainfo.add(new MetaInfo(result.getString("table_name"),
+                lstMetainfo.add(new MetaInfo(result.getString("owner"),
+                        result.getString("table_name"),
                         result.getString("column_name"),
                         result.getString("data_type"))
                 );
@@ -177,7 +197,8 @@ public class MetaUtils {
         FileWriter out = null;
         out = new FileWriter(new File(filePath));
         for (MetaInfo metaInfo : lstMetainfo) {
-            out.write(metaInfo.getTableName() + ","
+            out.write(metaInfo.getSchemaName() + ","
+                    + metaInfo.getTableName() + ","
                     + metaInfo.getColumnName() + ","
                     + metaInfo.getColumnType() + ","
                     + transOracleColumnToHiveColumn(metaInfo.getColumnType()) +"\n");
@@ -192,6 +213,7 @@ public class MetaUtils {
         opts.addOption("u", true, "user");
         opts.addOption("p", true, "password");
         opts.addOption("t", true, "table name");
+        opts.addOption("s", true, "table name");
         opts.addOption("f", true, "output json path");
 
 
@@ -209,6 +231,7 @@ public class MetaUtils {
                     String password = cl.getOptionValue("p");
                     String tableName = cl.getOptionValue("t");
                     String outJsonPath = cl.getOptionValue("f");
+                    String schemaName = cl.getOptionValue("s", user);
 
                     if (url ==null || user == null || password == null || outJsonPath == null) {
                         HelpFormatter hf = new HelpFormatter();
@@ -216,7 +239,7 @@ public class MetaUtils {
                         return;
                     }
 
-                    List<MetaInfo> lstMetaInfo = getOracleTableMetaInfo(url, user, password, tableName);
+                    List<MetaInfo> lstMetaInfo = getOracleTableMetaInfo(url, user, password, tableName,schemaName);
                     writeMetainfoToFile(lstMetaInfo, outJsonPath);
                 }
             } else {
