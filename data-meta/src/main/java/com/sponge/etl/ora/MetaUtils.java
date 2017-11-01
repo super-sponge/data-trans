@@ -213,7 +213,7 @@ public class MetaUtils {
         opts.addOption("u", true, "user");
         opts.addOption("p", true, "password");
         opts.addOption("t", true, "table name");
-        opts.addOption("s", true, "table name");
+        opts.addOption("s", true, "schema name");
         opts.addOption("f", true, "output json path");
 
 
